@@ -27,5 +27,23 @@ class UserTableSeeder extends Seeder
         		'level' => 2
         	]
         ));
+
+        DB::table('kategori')->insert(array(
+            [
+                'nama_kategori' => 'Makanan',
+            ],
+            [
+                'nama_kategori' => 'Minuman',
+            ],
+            [
+                'nama_kategori' => 'Elektronik',
+            ],
+            [
+                'nama_kategori' => 'Furniture',
+            ],
+            [
+                'nama_kategori' => 'Pakaian',
+            ],
+        ));
     }
 }
