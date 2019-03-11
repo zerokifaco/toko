@@ -4,8 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
-use App\AceSetting;
-use View;
+
+use App\Setting;
+use App\Kategori;
+use App\Produk;
+use App\Supplier;
+use App\Member;
+use App\Penjualan;
+
+use Redirect;
 
 class HomeController extends Controller
 {
@@ -14,14 +21,10 @@ class HomeController extends Controller
      *
      * @return void
      */
-     public function __construct()
-     {
-         $this->middleware('auth');
-         $ace_settings = AceSetting::all();
-
-         // dd($ace_settings);
-         View::share('ace_settings', $ace_settings);
-     }
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     /**
      * Show the application dashboard.
@@ -30,12 +33,32 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
+        $setting = Setting::find(1);
 
-        // var_dump($user->level);exit;
-        if($user->level== 1) return redirect()->route('home.admin');
-        elseif($user->level == 2 ) return redirect()->route('home.member');
-        else return redirect('/login');
+        $awal = date('Y-m-d', mktime(0, 0, 0, date('m'),1, date('Y')));
+        $akhir = date('Y-m-d');
+
+        $tanggal = $awal;
+        $data_tanggal = array();
+        $data_pendapatan = array();
+
+        while (strtotime($tanggal) <= strtotime($akhir)) {
+            $data_tanggal[] = (int)substr($tanggal, 0,2);
+
+            $pendapatan = Penjualan::where('created_at','LIKE', "$tanggal%")->sum('bayar');
+            $data_pendapatan[] = (int) $pendapatan;
+
+            $tanggal = date('Y-m-d', strtotime("+1 day", strtotime($tanggal)));
+        }
+
+        $kategori = Kategori::count();
+        $produk = Produk::count();
+        $supplier = Supplier::count();
+        $member = Member::count();
+
+        if(Auth::user()->level == 1) return view('home.admin', compact('kategori', 'produk', 'supplier', 'member', 'awal', 'akhir', 'data_pendapatan', 'data_tanggal'));
+        elseif(Auth::user()->level == 2) return view('home.kasir');
+        else return Redirect::route('auth.login', compact('setting'));
+
     }
-
 }

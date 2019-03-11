@@ -1,154 +1,163 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ config('app.locale') }}">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{ config('app.name', 'Laravel') }}</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js"></script>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" type="text/css" href="{{ asset('adminLTE/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('adminLTE/dist/css/AdminLTE.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('adminLTE/dist/css/skins/skin-blue.min.css') }}">
+  <!-- Morris chart -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('adminLTE/bower_components/morris.js/morris.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('adminLTE/plugins/DataTables/css/dataTables.bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('adminLTE/plugins/timepicker/bootstrap-timepicker.min.css') }}">
 
-	<title>Export | @yield('title')</title>
-	<link rel="icon" href="{!! asset('ace/images/avatars/avatar2.png') !!}"/>
-
-    <!-- bootstrap & fontawesome -->
-		<link rel="stylesheet" href="{{ asset('ace/css/bootstrap.min.css') }}" />
-		<link rel="stylesheet" href="{{ asset('ace/font-awesome/4.5.0/css/font-awesome.min.css') }}" />
-
-		<!-- page specific plugin styles -->
-		@yield('specific-style')
-
-		<!-- text fonts -->
-		<link rel="stylesheet" href="{{ asset('ace/css/fonts.googleapis.com.css') }}" />
-
-		<!-- ace styles -->
-		<link rel="stylesheet" href="{{ asset('ace/css/ace.min.css') }}" class="ace-main-stylesheet" id="main-ace-style" />
-
-		<!--[if lte IE 9]>
-			<link rel="stylesheet" href="{{ asset('ace/css/ace-part2.min.css') }}" class="ace-main-stylesheet" />
-		<![endif]-->
-		<link rel="stylesheet" href="{{ asset('ace/css/ace-skins.min.css') }}" />
-		<link rel="stylesheet" href="{{ asset('ace/css/ace-rtl.min.css') }}" />
-
-		<!--[if lte IE 9]>
-		  <link rel="stylesheet" href="{{ asset('ace/css/ace-ie.min.css') }}" />
-		<![endif]-->
-
-		<!-- inline styles related to this page -->
-
-		<!-- ace settings handler -->
-		<script src="{{ asset('ace/js/ace-extra.min.js') }}"></script>
-
-		@yield('style')
-
-
+  @yield('style')
+ 
 </head>
-<body class="{{Auth::user()->ace_setting->data_skin}}">
 
-        @include('layouts.navbar')
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
-    <div class="main-container ace-save-state" id="main-container">
-            <script type="text/javascript">
-				try{ace.settings.loadState('main-container')}catch(e){}
-			</script>
+  <!-- Main Header -->
+  <header class="main-header">
 
-        @include('layouts.sidebar')
+    <!-- Logo -->
+    <a href="#" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>A</b>LT</span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>Hey</b>MART</span>
+    </a>
 
-        <div class="main-content">
-            <div class="main-content-inner">
-                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-						<ul class="breadcrumb">
-							@section('breadcrumb')
-							<li>
-								<i class="ace-icon fa fa-home home-icon"></i>
-								<a href="/home">Home</a>
-							</li>
-							@show
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <!-- Navbar Right Menu -->
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown user user-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="{{ asset('images/'.Auth::user()->foto) }}" class="user-image" alt="user image"><span class="hidden-xs">{{ Auth::user()->name }}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="user-header"><img src="{{ asset('images/'.Auth::user()->foto) }}" class="img-circle" alt="user images"><P>{{ Auth::user()->name }}</P></li>
 
-						</ul><!-- /.breadcrumb -->
-
-						<div class="nav-search" id="nav-search">
-							<form class="form-search">
-								<span class="input-icon">
-									<input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
-									<i class="ace-icon fa fa-search nav-search-icon"></i>
-								</span>
-							</form>
-						</div><!-- /.nav-search -->
-				</div>
-
-                <div class="page-content">
-                    @include('layouts.ace-settings')
-
-                    <div class="page-header">
-							<h1>
-								@yield('header-title')
-
-							</h1>
-					</div><!-- /.page-header -->
-
-                    <div class="row">
-                        <div class="col-xs-12">
-                        <!-- PAGE CONTENT BEGINS -->
-						<div class="flash-message"></div>
-
-						@yield('content')
-
-                        <!-- END CONTENTS -->
-                        </div>
-                    </div>
-
+              <li class="user-footer">
+                <div class="pull-left">
+                    <a class="btn btn-default" href="{{ route('user.profil') }}">Edit Profil</a>
                 </div>
-            </div>
-        </div>
+                <div class="pull-right">
+                    <a class="btn btn-default btn-flat" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                    <form id="logout-form" action="{{ url('logout') }}" method="POST" style="display: none;">
+                        {{ csrf_field() }}
+                    </form>
+                </div>
+              </li>
 
-        @include('layouts.footer')
-        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-				<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-			</a>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+<!-- end header -->
 
+<!-- sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu">
+        <li class="header">MENU NAVIGASI</li>
+        
+        <li><a href="{{ url('home') }}"><i class="fa fa-dashboard"></i><span>Dashboard</span></a></li>
+
+        @if(Auth::user()->level == 1)
+
+        <li><a href="{{ route('kategori.index') }}"><i class="fa fa-cube"></i> <span>Kategori</span></a></li>
+        <li><a href="{{ route('produk.index') }}"><i class="fa fa-cubes"></i> <span>Produk</span></a></li>
+        <li><a href="{{ route('supplier.index') }}"><i class="fa fa-truck"></i> <span>Supplier</span></a></li>
+        <li><a href="{{ route('member.index') }}"><i class="fa fa-credit-card"></i> <span>Member</span></a></li>
+        <li><a href="{{ route('pengeluaran.index') }}"><i class="fa fa-money"></i> <span>Pengeluaran</span></a></li>
+        <li><a href="{{ route('user.index') }}"><i class="fa fa-user"></i> <span>User</span></a></li>
+        <li><a href="{{ route('pembelian.index') }}"><i class="fa fa-download"></i> <span>Pembelian</span></a></li>
+        <li><a href="{{ route('penjualan.index') }}"><i class="fa fa-upload"></i> <span>Penjualan</span></a></li>
+       
+        <li><a href="{{ route('laporan.index') }}"><i class="fa fa-file-pdf-o"></i> <span>Laporan</span></a></li>
+        <li><a href="{{ route('setting.index') }}"><i class="fa fa-gears"></i> <span>Setting</span></a></li>
+
+        @else
+
+        <li><a href="{{ route('transaksi.index') }}"><i class="fa fa-shopping-cart"></i> <span>Transaksi</span></a></li>
+        <li><a href="{{ route('transaksi.new') }}"><i class="fa fa-cart-plus"></i> <span>Transaksi Baru</span></a></li>
+
+        @endif
+       
+      </ul>   
+    </section>
+  </aside>
+<!-- end sidebar -->
+
+<!-- content -->
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>@yield('title')</h1>
+        <ol class="breadcrumb">
+            @section('breadcrumb')
+            <li><a href="{{ url('home') }}"><i class="fa fa-home"></i>HOME</a></li>
+            @show
+        </ol>
+    </section>
+
+    <section class="content">
+        @yield('content')
+
+    </section> 
+</div>
+<!-- end content -->
+
+<!-- footer -->
+<footer class="main-footer">
+    <div class="pull-right hidden-xs">
+        Aplikasi POS oleh:Riki Krismawan
     </div>
+    <strong>Copyright &copy; 2018 <a href="#">Company</a>.</strong> All rights reserved.
+</footer>
+<!-- end footer -->
+  
+</div>
+<!-- ./wrapper -->
 
+<!-- REQUIRED JS SCRIPTS -->
 
-    <!-- basic scripts -->
+<script src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
 
-		<!--[if !IE]> -->
-		<script src="{{ asset('ace/js/jquery-2.1.4.min.js') }}"></script>
+<script src="{{ asset('adminLTE/bootstrap/js/bootstrap.min.js') }}"></script>
+<!-- Morris.js charts -->
+<script src="{{ asset('adminLTE/bower_components/chart.js/Chart.js') }}"></script>
+<script src="{{ asset('adminLTE/bower_components/raphael/raphael.min.js') }}"></script>
+<script src="{{ asset('adminLTE/bower_components/morris.js/morris.min.js') }}"></script>
+<script src="{{ asset('adminLTE/dist/js/adminlte.min.js') }}"></script>
 
-		<!-- <![endif]-->
+<script src="{{ asset('adminLTE/plugins/DataTables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('adminLTE/plugins/DataTables/js/dataTables.bootstrap.min.js') }}"></script> 
+<script src="{{ asset('js/validator.js') }}"></script>
+<script src="{{ asset('js/toastr.min.js') }}"></script>
 
-		<!--[if IE]>
-<script src="{{ asset('ace/js/jquery-1.11.3.min.js') }}"></script>
-<![endif]-->
-		<script type="text/javascript">
-			if('ontouchstart' in document.documentElement) document.write("<script src='{{ asset('ace/js/jquery.mobile.custom.min.js') }}'>"+"<"+"/script>");
-		</script>
-		<script src="{{ asset('ace/js/bootstrap.min.js') }}"></script>
+@yield('script')
 
-		<!-- page specific plugin scripts -->
-
-
-		@yield('specific-script')
-
-		<!-- ace scripts -->
-		<script src="{{ asset('ace/js/ace-elements.min.js') }}"></script>
-		<script src="{{ asset('ace/js/ace.min.js') }}"></script>
-		<script type="text/javascript">
-            var csrfToken = $('[name="csrf_token"]').attr('content');
-
-            setInterval(refreshToken, 3600000); // 1 hour
-
-            function refreshToken(){
-                $.get('refresh-csrf').done(function(data){
-                    csrfToken = data; // the new token
-                });
-            }
-
-            setInterval(refreshToken, 3600000); // 1 hour
-
-
-        </script>
-
-	@yield('script')
 </body>
 </html>
